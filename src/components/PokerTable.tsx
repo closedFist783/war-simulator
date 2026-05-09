@@ -25,7 +25,7 @@ const DEFAULT_RULES: RuleConfig = {
   warParticipantsPolicy: 'tied_only',
   warDepthMode: 'recursive',
   faceDownSchedulePerWarLevel: [3],
-  captureOrderPolicy: 'winner_first',
+  captureOrderPolicy: 'randomized',
   insufficientCardsPolicy: 'immediate_loss',
   orderedOrRandomizedDefault: 'randomized-fixed',
 };
