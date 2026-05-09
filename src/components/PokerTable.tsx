@@ -183,19 +183,25 @@ export function PokerTable() {
       const p2data = result.perPlayer.find(p => p.id === h2.id);
       if (!p1data || !p2data) return;
 
+      // Normalize so probabilities always sum to 100%
+      const rawSum = p1data.winProbability + p2data.winProbability;
+      const norm = rawSum > 0 ? rawSum : 1;
+      const p1prob = p1data.winProbability / norm;
+      const p2prob = p2data.winProbability / norm;
+
       setProbAnimating(true);
       setP1(prev => ({
         ...prev,
         prevWinProb: prev.winProb,
-        winProb: p1data.winProbability,
-        delta: p1data.winProbability - prev.winProb,
+        winProb: p1prob,
+        delta: p1prob - prev.winProb,
         expectedRounds: p1data.expectedRemainingRounds,
       }));
       setP2(prev => ({
         ...prev,
         prevWinProb: prev.winProb,
-        winProb: p2data.winProbability,
-        delta: p2data.winProbability - prev.winProb,
+        winProb: p2prob,
+        delta: p2prob - prev.winProb,
         expectedRounds: p2data.expectedRemainingRounds,
       }));
       setTimeout(() => setProbAnimating(false), 900);
