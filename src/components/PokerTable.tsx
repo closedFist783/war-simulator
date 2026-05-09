@@ -162,6 +162,10 @@ export function PokerTable() {
   const [capturingCards] = useState(false);
   const [showWarBanner, setShowWarBanner] = useState(false);
 
+  // Auto-play
+  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
+  const autoPlayRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Refs
   const p1StackRef = useRef<HTMLDivElement>(null);
   const p2StackRef = useRef<HTMLDivElement>(null);
@@ -171,6 +175,16 @@ export function PokerTable() {
   // flyIdRef reserved for future flying card orchestration
   // const flyIdRef = useRef(0);
   const solverDebounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // ===== AUTO-PLAY =====
+  const handleAutoPlay = useCallback(() => {
+    setIsAutoPlaying(true);
+  }, []);
+
+  const handleStopAutoPlay = useCallback(() => {
+    setIsAutoPlaying(false);
+    if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+  }, []);
 
   // ===== SOLVER =====
   const runProbUpdate = useCallback(async (h1: PlayerHandState, h2: PlayerHandState) => {
@@ -248,6 +262,37 @@ export function PokerTable() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Auto-play effect
+  useEffect(() => {
+    if (!isAutoPlaying) return;
+
+    if (phase === 'game_over') {
+      setIsAutoPlaying(false);
+      return;
+    }
+
+    let fn: (() => void) | null = null;
+    if (phase === 'choosing') {
+      fn = handlePlayRandom;
+    } else if (phase === 'revealed' || phase === 'war_revealed' || phase === 'round_end') {
+      fn = handleNextRound;
+    } else if (phase === 'war_setup' || phase === 'war_facedown') {
+      fn = handleWarFaceDownRandom;
+    } else if (phase === 'war_deciding') {
+      fn = handleWarDecidingRandom;
+    }
+    // Other phases (animating etc): do nothing, wait for next render
+
+    if (fn) {
+      autoPlayRef.current = setTimeout(fn, 80);
+    }
+
+    return () => {
+      if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAutoPlaying, phase]);
+
   // ===== HAND MANAGEMENT =====
   const deductCard = (hand: PlayerHandState, rank: Rank): PlayerHandState => {
     const idx = hand.cards.findIndex(c => c.rank === rank);
@@ -284,6 +329,8 @@ export function PokerTable() {
 
   // ===== GAME FLOW =====
   const handleStartGame = () => {
+    setIsAutoPlaying(false);
+    if (autoPlayRef.current) clearTimeout(autoPlayRef.current);
     setPhase('choosing');
     setRoundNumber(1);
     setPotSize(0);
@@ -814,6 +861,9 @@ export function PokerTable() {
             warFaceDownChosen={warFaceDownChosen}
             warP1DeciderChosen={warP1DeciderChosen}
             warP2DeciderChosen={warP2DeciderChosen}
+            isAutoPlaying={isAutoPlaying}
+            onAutoPlay={handleAutoPlay}
+            onStopAutoPlay={handleStopAutoPlay}
           />
 
           {/* P2 - right side */}
@@ -836,15 +886,21 @@ export function PokerTable() {
           {/* WAR banner overlay */}
           <WarBanner visible={showWarBanner} />
 
-          {/* Deck viewer modal */}
-          {showDeckViewer && (
-            <DeckViewer
-              playerName={showDeckViewer === 'p1' ? p1.name : p2.name}
-              accentColor={showDeckViewer === 'p1' ? '#38BDF8' : '#A78BFA'}
-              cards={showDeckViewer === 'p1' ? p1.cards : p2.cards}
-              onClose={() => setShowDeckViewer(null)}
-            />
-          )}
+          {/* Deck viewer modals */}
+          <DeckViewer
+            playerName={p1.name}
+            accentColor="#38BDF8"
+            cards={p1.cards}
+            open={showDeckViewer === 'p1'}
+            onClose={() => setShowDeckViewer(null)}
+          />
+          <DeckViewer
+            playerName={p2.name}
+            accentColor="#A78BFA"
+            cards={p2.cards}
+            open={showDeckViewer === 'p2'}
+            onClose={() => setShowDeckViewer(null)}
+          />
 
           {/* Winner banner */}
           {phase === 'game_over' && gameWinner && (

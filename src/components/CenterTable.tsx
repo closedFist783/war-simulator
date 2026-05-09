@@ -57,6 +57,11 @@ interface CenterTableProps {
   warFaceDownChosen: boolean;
   warP1DeciderChosen: boolean;
   warP2DeciderChosen: boolean;
+
+  // Auto-play
+  isAutoPlaying?: boolean;
+  onAutoPlay?: () => void;
+  onStopAutoPlay?: () => void;
 }
 
 export function CenterTable({
@@ -92,6 +97,9 @@ export function CenterTable({
   warFaceDownChosen,
   warP1DeciderChosen,
   warP2DeciderChosen,
+  isAutoPlaying,
+  onAutoPlay,
+  onStopAutoPlay,
 }: CenterTableProps) {
 
   const renderBattleCards = () => {
@@ -186,6 +194,11 @@ export function CenterTable({
               <button className="btn btn-primary" onClick={onPlayRandom} disabled={!p1HasCards || !p2HasCards}>
                 🎲 Both Random
               </button>
+              {isAutoPlaying ? (
+                <button className="btn btn-danger" onClick={onStopAutoPlay}>⏹ Stop</button>
+              ) : (
+                <button className="btn btn-success" onClick={onAutoPlay} disabled={!p1HasCards || !p2HasCards}>▶ Auto Play</button>
+              )}
               <button className="btn btn-secondary" onClick={onP1Choose} disabled={p1Chosen || !p1HasCards}>
                 {p1Name}: Choose
               </button>
@@ -200,6 +213,9 @@ export function CenterTable({
         return (
           <div className="controls-row">
             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Playing cards…</div>
+            {isAutoPlaying && (
+              <button className="btn btn-danger" onClick={onStopAutoPlay}>⏹ Stop</button>
+            )}
           </div>
         );
 
@@ -230,6 +246,9 @@ export function CenterTable({
         return (
           <div className="controls-row">
             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>War cards flying…</div>
+            {isAutoPlaying && (
+              <button className="btn btn-danger" onClick={onStopAutoPlay}>⏹ Stop</button>
+            )}
           </div>
         );
 

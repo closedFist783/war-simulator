@@ -323,13 +323,27 @@ body {
 
 .btn-success {
   background: #22C55E;
-  color: #0B1020;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
+.btn-success:hover:not(:disabled) { background: #16a34a; transform: translateY(-1px); }
 
 .btn-danger {
   background: #F87171;
-  color: #0B1020;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
 }
+.btn-danger:hover:not(:disabled) { background: #ef4444; transform: translateY(-1px); }
 
 .btn-small {
   padding: 4px 10px;
@@ -867,6 +881,38 @@ body {
   gap: 8px;
   flex-wrap: wrap;
   margin-bottom: 12px;
+}
+
+/* ===== MODAL OVERLAY ===== */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.modal-panel {
+  background: #121A2B;
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  border-radius: 16px;
+  padding: 20px;
+  width: 90%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 16px;
 }
 
 /* ===== PREFERS-REDUCED-MOTION ===== */

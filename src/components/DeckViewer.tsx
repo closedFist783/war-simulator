@@ -5,10 +5,12 @@ interface DeckViewerProps {
   playerName: string;
   accentColor: string;
   cards: GameCard[];
+  open: boolean;
   onClose: () => void;
 }
 
-export function DeckViewer({ playerName, accentColor, cards, onClose }: DeckViewerProps) {
+export function DeckViewer({ playerName, accentColor, cards, open, onClose }: DeckViewerProps) {
+  if (!open) return null;
   const RANK_ORDER = ['A','K','Q','J','10','9','8','7','6','5','4','3','2'];
   const SUIT_ORDER = ['♠','♣','♥','♦'];
   const sorted = [...cards].sort((a, b) => {
