@@ -28,7 +28,7 @@ function useTweenNumber(target: number, duration: number = 600): number {
       if (!startRef.current) return;
       const elapsed = now - startRef.current.start;
       const t = Math.min(elapsed / duration, 1);
-      const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // ease-in-out
+      const eased = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
       setDisplayed(startRef.current.from + (startRef.current.to - startRef.current.from) * eased);
       if (t < 1) {
         rafRef.current = requestAnimationFrame(animate);
@@ -65,10 +65,9 @@ export function ProbabilityDisplay({
   const deltaSign = delta >= 0 ? '+' : '';
   const deltaClass = delta > 0.0001 ? 'positive' : delta < -0.0001 ? 'negative' : 'neutral';
 
-  // Expand decimals near 0% or 100% so it never falsely shows 0.0% or 100.0%
   function formatProb(val: number): string {
     if (val <= 0) return '0.000%';
-    if (val >= 100) return '100.000%';
+    if (val >= 100) return '100.0%';
     if (val < 0.1) return val.toFixed(3) + '%';
     if (val < 1) return val.toFixed(2) + '%';
     if (val > 99.9) return val.toFixed(3) + '%';

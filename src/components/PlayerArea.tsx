@@ -7,7 +7,7 @@ export interface PlayerHandState {
   id: string;
   name: string;
   cards: GameCard[];
-  rankCounts: Record<Rank, number | null>; // null = unknown rank
+  rankCounts: Record<Rank, number | null>;
   unknownCount: number;
   totalCards: number;
   winProb: number;
@@ -63,7 +63,7 @@ export function PlayerArea({
           <input
             ref={nameRef}
             className="rank-input"
-            style={{ width: 120, fontSize: 14, fontWeight: 700, color: accentColor }}
+            style={{ width: 120, fontSize: 14, fontWeight: 800, color: accentColor, letterSpacing: '-0.01em' }}
             value={nameInput}
             onChange={(e) => setNameInput(e.target.value)}
             onBlur={() => {
@@ -108,12 +108,12 @@ export function PlayerArea({
         animating={probAnimating}
       />
 
-      {/* Card stack */}
+      {/* Card stack — premium with real depth */}
       <div
         ref={stackRef}
         className={`card-stack-wrapper ${stackBouncing ? 'stack-bounce' : ''}`}
         onClick={() => onViewDeck?.()}
-        style={{ cursor: player.cards.length > 0 ? 'pointer' : undefined }}
+        style={{ cursor: player.cards.length > 0 ? 'pointer' : 'default' }}
         title={player.cards.length > 0 ? 'View hand' : undefined}
       >
         {Array.from({ length: layers }, (_, i) => (
@@ -133,6 +133,7 @@ export function PlayerArea({
           {player.totalCards}
         </span>
       </div>
+
       {/* Hand size */}
       <div className="hand-size-display">
         {player.totalCards} cards

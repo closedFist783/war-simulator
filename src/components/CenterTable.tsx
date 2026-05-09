@@ -289,7 +289,7 @@ export function CenterTable({
       case 'war_revealed':
         return resultMessage ? (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, alignItems: 'center' }}>
-            <div className="round-result-banner">{resultMessage}</div>
+            <div className="round-result-banner war-result">{resultMessage}</div>
             <div className="controls-row">
               <button className="btn btn-primary" onClick={onNextRound}>Next Round →</button>
             </div>
@@ -322,18 +322,18 @@ export function CenterTable({
         <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 10 }}>
           {isAutoPlaying ? (
             <button
-              className="btn btn-danger"
+              className="btn-stop"
               onClick={onStopAutoPlay}
-              style={{ minWidth: 100, fontWeight: 700 }}
+              style={{ minWidth: 100 }}
             >
               ⏹ Stop
             </button>
           ) : (
             <button
-              className="btn btn-success"
+              className="btn-autoplay"
               onClick={onAutoPlay}
               disabled={!p1HasCards || !p2HasCards}
-              style={{ minWidth: 100, fontWeight: 700 }}
+              style={{ minWidth: 100 }}
             >
               ▶ Auto Play
             </button>
@@ -366,32 +366,14 @@ export function CenterTable({
       {/* Delta display in center */}
       {(phase === 'revealed' || phase === 'war_revealed' || phase === 'war_deciding') &&
        (p1Delta !== undefined || p2Delta !== undefined) && (
-        <div style={{
-          display: 'flex',
-          gap: 24,
-          justifyContent: 'center',
-          alignItems: 'center',
-          margin: '8px 0',
-          background: 'rgba(0,0,0,0.35)',
-          borderRadius: 12,
-          padding: '8px 20px',
-          border: '1px solid rgba(255,255,255,0.08)',
-        }}>
-          {[{ name: p1Name, delta: p1Delta, color: '#38BDF8' }, { name: p2Name, delta: p2Delta, color: '#A78BFA' }].map(({ name, delta, color }) => (
+        <div className="delta-display">
+          {[{ name: p1Name, delta: p1Delta, color: '#38BDF8' }, { name: p2Name, delta: p2Delta, color: '#A78BFA' }].map(({ name, delta }) => (
             delta !== undefined ? (
-              <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
-                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</span>
-                <span style={{
-                  fontSize: 22,
-                  fontWeight: 800,
-                  letterSpacing: '-0.02em',
-                  color: delta > 0.0005 ? '#22C55E' : delta < -0.0005 ? '#F87171' : color,
-                  textShadow: delta > 0.0005
-                    ? '0 0 12px rgba(34,197,94,0.6)'
-                    : delta < -0.0005
-                    ? '0 0 12px rgba(248,113,113,0.6)'
-                    : 'none',
-                }}>
+              <div key={name} className="delta-item">
+                <span className="delta-label">{name}</span>
+                <span className={`delta-value ${
+                  delta > 0.0005 ? 'positive' : delta < -0.0005 ? 'negative' : 'neutral'
+                }`}>
                   {delta > 0.0005 ? '+' : ''}{(delta * 100).toFixed(1)}%
                 </span>
               </div>

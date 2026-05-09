@@ -27,10 +27,9 @@ function makeParticles(n: number): Particle[] {
 }
 
 export function WinnerBanner({ winnerName, accentColor, onPlayAgain }: WinnerBannerProps) {
-  const [particles] = useState<Particle[]>(() => makeParticles(40));
+  const [particles] = useState<Particle[]>(() => makeParticles(50));
 
   useEffect(() => {
-    // Prevent body scroll
     return () => {};
   }, []);
 
@@ -49,20 +48,20 @@ export function WinnerBanner({ winnerName, accentColor, onPlayAgain }: WinnerBan
           }}
         />
       ))}
-      <div style={{ position: 'relative', zIndex: 1, textAlign: 'center' }}>
-        <div style={{ fontSize: 60, marginBottom: 8 }}>🏆</div>
+      <div className="winner-banner-card" style={{ position: 'relative', zIndex: 1 }}>
+        <div style={{ fontSize: 64, marginBottom: 12 }}>🏆</div>
         <div
           className="winner-text"
           style={{ color: accentColor }}
         >
           {winnerName} Wins!
         </div>
-        <div style={{ marginTop: 12, color: 'rgba(255,255,255,0.6)', fontSize: 14 }}>
-          The war is over.
+        <div style={{ marginTop: 8, color: 'rgba(255,255,255,0.5)', fontSize: 14, letterSpacing: '0.05em', textTransform: 'uppercase', fontWeight: 600 }}>
+          The war is over
         </div>
         <button
           className="btn btn-primary"
-          style={{ marginTop: 24, padding: '10px 28px', fontSize: 15 }}
+          style={{ marginTop: 28, padding: '12px 36px', fontSize: 15, letterSpacing: '0.03em' }}
           onClick={onPlayAgain}
         >
           Play Again

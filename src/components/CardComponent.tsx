@@ -17,14 +17,26 @@ interface CardProps {
   style?: React.CSSProperties;
   cardRef?: React.RefObject<HTMLDivElement | null>;
   placeholder?: boolean;
+  winner?: boolean;
+  hoverable?: boolean;
 }
 
 export function isRed(suit: Suit): boolean {
   return suit === '♥' || suit === '♦';
 }
 
-export function CardComponent({ card, size = 'normal', className = '', style, cardRef, placeholder }: CardProps) {
+export function CardComponent({
+  card,
+  size = 'normal',
+  className = '',
+  style,
+  cardRef,
+  placeholder,
+  winner,
+  hoverable,
+}: CardProps) {
   const sizeClass = size === 'large' ? 'card-large' : '';
+  const hoverClass = hoverable ? 'card-hoverable' : '';
 
   if (!card || placeholder) {
     return (
@@ -40,7 +52,7 @@ export function CardComponent({ card, size = 'normal', className = '', style, ca
     return (
       <div
         ref={cardRef}
-        className={`playing-card card-back ${sizeClass} ${className}`}
+        className={`playing-card card-back ${sizeClass} ${hoverClass} ${className}`}
         style={style}
       />
     );
@@ -48,11 +60,12 @@ export function CardComponent({ card, size = 'normal', className = '', style, ca
 
   const red = isRed(card.suit);
   const colorClass = red ? 'card-red' : 'card-black';
+  const winnerClass = winner ? 'card-winner' : '';
 
   return (
     <div
       ref={cardRef}
-      className={`playing-card ${colorClass} ${sizeClass} ${className}`}
+      className={`playing-card ${colorClass} ${sizeClass} ${winnerClass} ${hoverClass} card-flip ${className}`}
       style={style}
     >
       <div className="card-corner top-left">
