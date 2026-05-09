@@ -65,10 +65,21 @@ export function ProbabilityDisplay({
   const deltaSign = delta >= 0 ? '+' : '';
   const deltaClass = delta > 0.0001 ? 'positive' : delta < -0.0001 ? 'negative' : 'neutral';
 
+  // Expand decimals near 0% or 100% so it never falsely shows 0.0% or 100.0%
+  function formatProb(val: number): string {
+    if (val <= 0) return '0.000%';
+    if (val >= 100) return '100.000%';
+    if (val < 0.1) return val.toFixed(3) + '%';
+    if (val < 1) return val.toFixed(2) + '%';
+    if (val > 99.9) return val.toFixed(3) + '%';
+    if (val > 99) return val.toFixed(2) + '%';
+    return val.toFixed(1) + '%';
+  }
+
   return (
     <div className="prob-display">
       <div className={`prob-main ${accentClass} ${flashClass}`}>
-        {tweened.toFixed(1)}%
+        {formatProb(tweened)}
       </div>
       {Math.abs(delta) > 0.0001 && (
         <div className={`prob-delta ${deltaClass}`}>
