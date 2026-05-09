@@ -210,6 +210,7 @@ body {
 /* ===== CENTER TABLE AREA ===== */
 
 .center-area {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

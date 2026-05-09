@@ -135,31 +135,48 @@ export function CenterTable({
   };
 
   const renderWarCards = () => {
-    const maxLen = Math.max(p1WarFaceDown.length, p2WarFaceDown.length);
-    if (maxLen === 0) return null;
+    const hasFaceDown = p1WarFaceDown.length > 0 || p2WarFaceDown.length > 0;
+    const hasDecider = p1WarDecider || p2WarDecider;
+    if (!hasFaceDown && !hasDecider) return null;
+
+    // Build a flat row of all war cards interleaved: p1 face-downs, then deciders side by side
+    const p1All = [...p1WarFaceDown, ...(p1WarDecider ? [p1WarDecider] : [])];
+    const p2All = [...p2WarFaceDown, ...(p2WarDecider ? [p2WarDecider] : [])];
 
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
-        <div className="war-label">WAR CARDS</div>
-        <div style={{ display: 'flex', gap: 20 }}>
-          {/* P1 war cards */}
-          <div className="war-cards-row">
-            {p1WarFaceDown.map((c, i) => (
-              <CardComponent key={i} card={c} style={{ marginLeft: i > 0 ? -30 : 0, transform: `rotate(${(i - 1) * 5}deg)` }} />
-            ))}
-            {p1WarDecider && (
-              <CardComponent card={p1WarDecider} className="card-appear-left" style={{ marginLeft: 8 }} />
-            )}
+        <div className="war-label" style={{ color: '#F59E0B', fontSize: 11, letterSpacing: '0.1em' }}>⚔ WAR CARDS ⚔</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {/* P1 war cards left-to-right */}
+          <div style={{ display: 'flex', gap: 4 }}>
+            {p1All.map((c, i) => {
+              const isDecider = i === p1WarFaceDown.length && p1WarDecider;
+              return (
+                <div key={i} style={{ transform: `rotate(${(i - 1) * 4}deg)` }}>
+                  <CardComponent
+                    card={c}
+                    className={isDecider ? 'card-appear-left' : ''}
+                  />
+                </div>
+              );
+            })}
           </div>
-          <div className="war-label">vs</div>
-          {/* P2 war cards */}
-          <div className="war-cards-row">
-            {p2WarFaceDown.map((c, i) => (
-              <CardComponent key={i} card={c} style={{ marginLeft: i > 0 ? -30 : 0, transform: `rotate(${(i - 1) * 5}deg)` }} />
-            ))}
-            {p2WarDecider && (
-              <CardComponent card={p2WarDecider} className="card-appear-right" style={{ marginLeft: 8 }} />
-            )}
+
+          <div style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 700, fontSize: 13, minWidth: 16, textAlign: 'center' }}>vs</div>
+
+          {/* P2 war cards left-to-right */}
+          <div style={{ display: 'flex', gap: 4 }}>
+            {p2All.map((c, i) => {
+              const isDecider = i === p2WarFaceDown.length && p2WarDecider;
+              return (
+                <div key={i} style={{ transform: `rotate(${(i - 1) * 4}deg)` }}>
+                  <CardComponent
+                    card={c}
+                    className={isDecider ? 'card-appear-right' : ''}
+                  />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -194,11 +211,6 @@ export function CenterTable({
               <button className="btn btn-primary" onClick={onPlayRandom} disabled={!p1HasCards || !p2HasCards}>
                 🎲 Both Random
               </button>
-              {isAutoPlaying ? (
-                <button className="btn btn-danger" onClick={onStopAutoPlay}>⏹ Stop</button>
-              ) : (
-                <button className="btn btn-success" onClick={onAutoPlay} disabled={!p1HasCards || !p2HasCards}>▶ Auto Play</button>
-              )}
               <button className="btn btn-secondary" onClick={onP1Choose} disabled={p1Chosen || !p1HasCards}>
                 {p1Name}: Choose
               </button>
@@ -213,9 +225,6 @@ export function CenterTable({
         return (
           <div className="controls-row">
             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>Playing cards…</div>
-            {isAutoPlaying && (
-              <button className="btn btn-danger" onClick={onStopAutoPlay}>⏹ Stop</button>
-            )}
           </div>
         );
 
@@ -246,9 +255,6 @@ export function CenterTable({
         return (
           <div className="controls-row">
             <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13 }}>War cards flying…</div>
-            {isAutoPlaying && (
-              <button className="btn btn-danger" onClick={onStopAutoPlay}>⏹ Stop</button>
-            )}
           </div>
         );
 
@@ -311,6 +317,30 @@ export function CenterTable({
 
   return (
     <div className="center-area">
+      {/* Auto Play / Stop — fixed at top, always same position */}
+      {phase !== 'setup' && phase !== 'game_over' && (
+        <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 10 }}>
+          {isAutoPlaying ? (
+            <button
+              className="btn btn-danger"
+              onClick={onStopAutoPlay}
+              style={{ minWidth: 100, fontWeight: 700 }}
+            >
+              ⏹ Stop
+            </button>
+          ) : (
+            <button
+              className="btn btn-success"
+              onClick={onAutoPlay}
+              disabled={!p1HasCards || !p2HasCards}
+              style={{ minWidth: 100, fontWeight: 700 }}
+            >
+              ▶ Auto Play
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Status bar showing round */}
       {phase !== 'setup' && (
         <div className="status-bar">

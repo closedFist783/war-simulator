@@ -1,3 +1,4 @@
+import './index.css';
 import './styles/table.css';
 import { PokerTable } from './components/PokerTable';
 

@@ -133,10 +133,6 @@ export function PlayerArea({
           {player.totalCards}
         </span>
       </div>
-      {player.cards.length > 0 && (
-        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2, cursor: 'pointer' }} onClick={() => onViewDeck?.()}>👁 View</div>
-      )}
-
       {/* Hand size */}
       <div className="hand-size-display">
         {player.totalCards} cards
