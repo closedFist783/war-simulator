@@ -1,11 +1,12 @@
 import { useRef, useState } from 'react';
-import type { Rank } from './CardComponent';
+import type { GameCard, Rank } from './CardComponent';
 import { ProbabilityDisplay } from './ProbabilityDisplay';
 import { RankEditor } from './RankEditor';
 
 export interface PlayerHandState {
   id: string;
   name: string;
+  cards: GameCard[];
   rankCounts: Record<Rank, number | null>; // null = unknown rank
   unknownCount: number;
   totalCards: number;
@@ -28,6 +29,7 @@ interface PlayerAreaProps {
   stackBouncing?: boolean;
   disabled?: boolean;
   onNameChange: (name: string) => void;
+  onViewDeck?: () => void;
 }
 
 export function PlayerArea({
@@ -43,6 +45,7 @@ export function PlayerArea({
   stackBouncing,
   disabled,
   onNameChange,
+  onViewDeck,
 }: PlayerAreaProps) {
   const [editingName, setEditingName] = useState(false);
   const [nameInput, setNameInput] = useState(player.name);
@@ -109,6 +112,9 @@ export function PlayerArea({
       <div
         ref={stackRef}
         className={`card-stack-wrapper ${stackBouncing ? 'stack-bounce' : ''}`}
+        onClick={() => onViewDeck?.()}
+        style={{ cursor: player.cards.length > 0 ? 'pointer' : undefined }}
+        title={player.cards.length > 0 ? 'View hand' : undefined}
       >
         {Array.from({ length: layers }, (_, i) => (
           <div
@@ -127,6 +133,9 @@ export function PlayerArea({
           {player.totalCards}
         </span>
       </div>
+      {player.cards.length > 0 && (
+        <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', marginTop: 2, cursor: 'pointer' }} onClick={() => onViewDeck?.()}>👁 View</div>
+      )}
 
       {/* Hand size */}
       <div className="hand-size-display">

@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { PlayerArea } from './PlayerArea';
 import type { PlayerHandState } from './PlayerArea';
+import { DeckViewer } from './DeckViewer';
 import { CenterTable } from './CenterTable';
 import type { GamePhase } from './CenterTable';
 import { FlyingCard } from './FlyingCard';
@@ -65,20 +66,26 @@ function randomRank(counts: Record<Rank, number | null>, unknownCount: number): 
   return entries[Math.floor(Math.random() * entries.length)];
 }
 
-function makeDefaultHand(): PlayerHandState {
+
+function dealDeck(): [GameCard[], GameCard[]] {
+  const deck: GameCard[] = [];
+  for (const rank of ALL_RANKS) {
+    for (const suit of SUITS) {
+      deck.push({ rank, suit, faceUp: false });
+    }
+  }
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [deck[i], deck[j]] = [deck[j], deck[i]];
+  }
+  return [deck.slice(0, 26), deck.slice(26)];
+}
+
+function makeHandFromCards(cards: GameCard[], id: string, name: string): PlayerHandState {
   const rankCounts: Record<Rank, number | null> = {} as Record<Rank, number | null>;
-  for (const r of ALL_RANKS) rankCounts[r] = null;
-  return {
-    id: '',
-    name: '',
-    rankCounts,
-    unknownCount: 26,
-    totalCards: 26,
-    winProb: 0.5,
-    prevWinProb: 0.5,
-    delta: 0,
-    expectedRounds: 100,
-  };
+  for (const r of ALL_RANKS) rankCounts[r] = 0;
+  for (const c of cards) rankCounts[c.rank] = (rankCounts[c.rank] as number) + 1;
+  return { id, name, cards: [...cards], rankCounts, unknownCount: 0, totalCards: cards.length, winProb: 0.5, prevWinProb: 0.5, delta: 0, expectedRounds: 100 };
 }
 
 function makeRankCountsForSolver(hand: PlayerHandState): RankCounts {
@@ -113,8 +120,14 @@ interface CardPickerState {
 export function PokerTable() {
   const [phase, setPhase] = useState<GamePhase>('setup');
   const [roundNumber, setRoundNumber] = useState(0);
-  const [p1, setP1] = useState<PlayerHandState>({ ...makeDefaultHand(), id: 'player1', name: 'Player 1' });
-  const [p2, setP2] = useState<PlayerHandState>({ ...makeDefaultHand(), id: 'player2', name: 'Player 2' });
+  // Deal one shared deck, split between players (lazy init so it only runs once)
+  const [_initDeal] = useState<[PlayerHandState, PlayerHandState]>(() => {
+    const [c1, c2] = dealDeck();
+    return [makeHandFromCards(c1, 'player1', 'Player 1'), makeHandFromCards(c2, 'player2', 'Player 2')];
+  });
+  const [p1, setP1] = useState<PlayerHandState>(_initDeal[0]);
+  const [p2, setP2] = useState<PlayerHandState>(_initDeal[1]);
+  const [showDeckViewer, setShowDeckViewer] = useState<'p1' | 'p2' | null>(null);
 
   // Cards in play
   const [p1Card, setP1Card] = useState<GameCard | null>(null);
@@ -123,6 +136,7 @@ export function PokerTable() {
   const [p2WarFaceDown, setP2WarFaceDown] = useState<GameCard[]>([]);
   const [p1WarDecider, setP1WarDecider] = useState<GameCard | null>(null);
   const [p2WarDecider, setP2WarDecider] = useState<GameCard | null>(null);
+  const [potCards, setPotCards] = useState<GameCard[]>([]);
   const [potSize, setPotSize] = useState(0);
   const [_winnerId, setWinnerId] = useState<string | null>(null);
   const [resultMessage, setResultMessage] = useState('');
@@ -161,6 +175,19 @@ export function PokerTable() {
   // ===== SOLVER =====
   const runProbUpdate = useCallback(async (h1: PlayerHandState, h2: PlayerHandState) => {
     if (h1.totalCards === 0 || h2.totalCards === 0) return;
+    // Symmetry: identical rank distributions → exactly 50/50
+    if (h1.totalCards === h2.totalCards) {
+      const rc1 = makeRankCountsForSolver(h1);
+      const rc2 = makeRankCountsForSolver(h2);
+      const symmetric = ALL_RANKS.every(r => rc1[r] === rc2[r]);
+      if (symmetric) {
+        setProbAnimating(true);
+        setP1(prev => ({ ...prev, prevWinProb: prev.winProb, winProb: 0.5, delta: 0.5 - prev.winProb, expectedRounds: prev.expectedRounds }));
+        setP2(prev => ({ ...prev, prevWinProb: prev.winProb, winProb: 0.5, delta: 0.5 - prev.winProb, expectedRounds: prev.expectedRounds }));
+        setTimeout(() => setProbAnimating(false), 900);
+        return;
+      }
+    }
     try {
       const players: PlayerStateInput[] = [
         {
@@ -223,21 +250,25 @@ export function PokerTable() {
 
   // ===== HAND MANAGEMENT =====
   const deductCard = (hand: PlayerHandState, rank: Rank): PlayerHandState => {
+    const idx = hand.cards.findIndex(c => c.rank === rank);
+    const newCards = [...hand.cards];
+    if (idx >= 0) newCards.splice(idx, 1);
+    const newCounts = { ...hand.rankCounts };
     const c = hand.rankCounts[rank];
-    let newCounts = { ...hand.rankCounts };
-    let newUnknown = hand.unknownCount;
-
-    if (c === null || c === 0) {
-      // deduct from unknown
-      newUnknown = Math.max(0, newUnknown - 1);
-    } else {
+    if (c !== null && (c as number) > 0) {
       newCounts[rank] = (c as number) - 1;
     }
-    return { ...hand, rankCounts: newCounts, unknownCount: newUnknown, totalCards: hand.totalCards - 1 };
+    const newUnknown = idx < 0 ? Math.max(0, hand.unknownCount - 1) : hand.unknownCount;
+    return { ...hand, cards: newCards, rankCounts: newCounts, unknownCount: newUnknown, totalCards: hand.totalCards - 1 };
   };
 
-  const addCards = (hand: PlayerHandState, count: number): PlayerHandState => {
-    return { ...hand, unknownCount: hand.unknownCount + count, totalCards: hand.totalCards + count };
+  const addCardsFromPot = (hand: PlayerHandState, wonCards: GameCard[]): PlayerHandState => {
+    const newCards = [...hand.cards, ...wonCards.map(c => ({ ...c, faceUp: false }))];
+    const newCounts = { ...hand.rankCounts };
+    for (const c of wonCards) {
+      newCounts[c.rank] = ((newCounts[c.rank] as number) ?? 0) + 1;
+    }
+    return { ...hand, cards: newCards, rankCounts: newCounts, unknownCount: hand.unknownCount, totalCards: hand.totalCards + wonCards.length };
   };
 
   // ===== FLYING CARD HELPERS =====
@@ -256,6 +287,7 @@ export function PokerTable() {
     setPhase('choosing');
     setRoundNumber(1);
     setPotSize(0);
+    setPotCards([]);
     setP1Card(null);
     setP2Card(null);
     setP1WarFaceDown([]);
@@ -311,9 +343,11 @@ export function PokerTable() {
       setPhase('revealed');
       // Update hands after capture
       setTimeout(() => {
-        const updated1 = addCards(h1, newPot);
+        const wonCards = [...potCards, card1, card2];
+        const updated1 = addCardsFromPot(h1, wonCards);
         setP1(updated1);
         setP2(h2);
+        setPotCards([]);
         bounceStack('p1');
         debouncedSolve(updated1, h2);
       }, 100);
@@ -324,14 +358,17 @@ export function PokerTable() {
       setPotSize(newPot);
       setPhase('revealed');
       setTimeout(() => {
-        const updated2 = addCards(h2, newPot);
+        const wonCards = [...potCards, card1, card2];
+        const updated2 = addCardsFromPot(h2, wonCards);
         setP2(updated2);
         setP1(h1);
+        setPotCards([]);
         bounceStack('p2');
         debouncedSolve(h1, updated2);
       }, 100);
     } else {
-      // WAR!
+      // WAR! Track the played cards in the pot
+      setPotCards(prev => [...prev, card1, card2]);
       setIsWar(true);
       setPotSize(newPot);
       setShowWarBanner(true);
@@ -351,11 +388,17 @@ export function PokerTable() {
 
   // ===== CARD SELECTION =====
   const pickRandomCard = (hand: PlayerHandState): [GameCard, PlayerHandState] => {
+    if (hand.cards.length > 0) {
+      const idx = Math.floor(Math.random() * hand.cards.length);
+      const card = { ...hand.cards[idx], faceUp: false };
+      const newHand = deductCard(hand, card.rank);
+      return [card, newHand];
+    }
+    // Fallback: pick random rank from counts
     const rank = randomRank(hand.rankCounts, hand.unknownCount);
     const suit = randomSuit();
     const card: GameCard = { rank, suit, faceUp: false };
-    const newHand = deductCard(hand, rank);
-    return [card, newHand];
+    return [card, deductCard(hand, rank)];
   };
 
   const handlePlayRandom = () => {
@@ -501,6 +544,7 @@ export function PokerTable() {
     setP2WarFaceDown(fd2);
     setP1(h1);
     setP2(h2);
+    setPotCards(prev => [...prev, ...fd1, ...fd2]);
     setPotSize(prev => prev + fd1.length + fd2.length);
 
     setTimeout(() => {
@@ -532,11 +576,15 @@ export function PokerTable() {
           setPotSize(newPot);
           setPhase('war_revealed');
           setTimeout(() => {
-            const updated1 = addCards(h1, newPot);
-            setP1(updated1);
-            setP2(h2);
-            bounceStack('p1');
-            debouncedSolve(updated1, h2);
+            setPotCards(prev => {
+              const allWon = [...prev, dec1, dec2];
+              const updated1 = addCardsFromPot(h1, allWon);
+              setP1(updated1);
+              setP2(h2);
+              bounceStack('p1');
+              debouncedSolve(updated1, h2);
+              return [];
+            });
           }, 100);
         } else if (v2 > v1) {
           setResultMessage(`${h2.name} wins the WAR! 🏆`);
@@ -544,11 +592,15 @@ export function PokerTable() {
           setPotSize(newPot);
           setPhase('war_revealed');
           setTimeout(() => {
-            const updated2 = addCards(h2, newPot);
-            setP2(updated2);
-            setP1(h1);
-            bounceStack('p2');
-            debouncedSolve(h1, updated2);
+            setPotCards(prev => {
+              const allWon = [...prev, dec1, dec2];
+              const updated2 = addCardsFromPot(h2, allWon);
+              setP2(updated2);
+              setP1(h1);
+              bounceStack('p2');
+              debouncedSolve(h1, updated2);
+              return [];
+            });
           }, 100);
         } else {
           // Another war!
@@ -611,6 +663,7 @@ export function PokerTable() {
     setWinnerId(null);
     setIsWar(false);
     setPotSize(0);
+    setPotCards([]);
     setP1Chosen(false);
     setP2Chosen(false);
     setP1PendingCard(null);
@@ -678,8 +731,9 @@ export function PokerTable() {
   };
 
   const handlePlayAgain = () => {
-    const fresh1 = { ...makeDefaultHand(), id: 'player1', name: p1.name };
-    const fresh2 = { ...makeDefaultHand(), id: 'player2', name: p2.name };
+    const [c1, c2] = dealDeck();
+    const fresh1 = makeHandFromCards(c1, 'player1', p1.name);
+    const fresh2 = makeHandFromCards(c2, 'player2', p2.name);
     setP1(fresh1);
     setP2(fresh2);
     setPhase('setup');
@@ -694,6 +748,7 @@ export function PokerTable() {
     setResultMessage('');
     setWinnerId(null);
     setIsWar(false);
+    setPotCards([]);
     runProbUpdate(fresh1, fresh2);
   };
 
@@ -720,6 +775,7 @@ export function PokerTable() {
             stackBouncing={p1StackBouncing}
             disabled={phase !== 'setup' && phase !== 'choosing'}
             onNameChange={(name) => setP1(prev => ({ ...prev, name }))}
+            onViewDeck={() => setShowDeckViewer('p1')}
           />
 
           {/* Center */}
@@ -774,10 +830,21 @@ export function PokerTable() {
             stackBouncing={p2StackBouncing}
             disabled={phase !== 'setup' && phase !== 'choosing'}
             onNameChange={(name) => setP2(prev => ({ ...prev, name }))}
+            onViewDeck={() => setShowDeckViewer('p2')}
           />
 
           {/* WAR banner overlay */}
           <WarBanner visible={showWarBanner} />
+
+          {/* Deck viewer modal */}
+          {showDeckViewer && (
+            <DeckViewer
+              playerName={showDeckViewer === 'p1' ? p1.name : p2.name}
+              accentColor={showDeckViewer === 'p1' ? '#38BDF8' : '#A78BFA'}
+              cards={showDeckViewer === 'p1' ? p1.cards : p2.cards}
+              onClose={() => setShowDeckViewer(null)}
+            />
+          )}
 
           {/* Winner banner */}
           {phase === 'game_over' && gameWinner && (
