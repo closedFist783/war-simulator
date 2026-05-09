@@ -28,6 +28,10 @@ interface CenterTableProps {
   roundNumber: number;
   isWar?: boolean;
   capturing?: boolean;
+  p1Delta?: number;
+  p2Delta?: number;
+  p1Name: string;
+  p2Name: string;
 
   // Refs for flying card source/target
   p1CardSlotRef: React.RefObject<HTMLDivElement | null>;
@@ -44,8 +48,6 @@ interface CenterTableProps {
   onNextRound: () => void;
   onStartGame: () => void;
 
-  p1Name: string;
-  p2Name: string;
   p1HasCards: boolean;
   p2HasCards: boolean;
 
@@ -68,6 +70,8 @@ export function CenterTable({
   potSize,
   resultMessage,
   roundNumber,
+  p1Delta,
+  p2Delta,
   p1CardSlotRef,
   p2CardSlotRef,
   onPlayRandom,
@@ -309,6 +313,43 @@ export function CenterTable({
 
       {/* War cards */}
       {(p1WarFaceDown.length > 0 || p2WarFaceDown.length > 0) && renderWarCards()}
+
+      {/* Delta display in center */}
+      {(phase === 'revealed' || phase === 'war_revealed' || phase === 'war_deciding') &&
+       (p1Delta !== undefined || p2Delta !== undefined) && (
+        <div style={{
+          display: 'flex',
+          gap: 24,
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '8px 0',
+          background: 'rgba(0,0,0,0.35)',
+          borderRadius: 12,
+          padding: '8px 20px',
+          border: '1px solid rgba(255,255,255,0.08)',
+        }}>
+          {[{ name: p1Name, delta: p1Delta, color: '#38BDF8' }, { name: p2Name, delta: p2Delta, color: '#A78BFA' }].map(({ name, delta, color }) => (
+            delta !== undefined ? (
+              <div key={name} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+                <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.45)', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{name}</span>
+                <span style={{
+                  fontSize: 22,
+                  fontWeight: 800,
+                  letterSpacing: '-0.02em',
+                  color: delta > 0.0005 ? '#22C55E' : delta < -0.0005 ? '#F87171' : color,
+                  textShadow: delta > 0.0005
+                    ? '0 0 12px rgba(34,197,94,0.6)'
+                    : delta < -0.0005
+                    ? '0 0 12px rgba(248,113,113,0.6)'
+                    : 'none',
+                }}>
+                  {delta > 0.0005 ? '+' : ''}{(delta * 100).toFixed(1)}%
+                </span>
+              </div>
+            ) : null
+          ))}
+        </div>
+      )}
 
       {/* Result message (inline for non-war) */}
       {renderControls()}

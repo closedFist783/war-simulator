@@ -730,6 +730,8 @@ export function PokerTable() {
             roundNumber={roundNumber}
             isWar={isWar}
             capturing={capturingCards}
+            p1Delta={p1.delta}
+            p2Delta={p2.delta}
             p1CardSlotRef={p1CardSlotRef}
             p2CardSlotRef={p2CardSlotRef}
             onPlayRandom={handlePlayRandom}
