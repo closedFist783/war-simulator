@@ -28,6 +28,7 @@ interface CenterTableProps {
   roundNumber: number;
   isWar?: boolean;
   capturing?: boolean;
+  winnerSide?: 'p1' | 'p2' | null;
   p1Delta?: number;
   p2Delta?: number;
   p1Name: string;
@@ -75,6 +76,7 @@ export function CenterTable({
   potSize,
   resultMessage,
   roundNumber,
+  winnerSide,
   p1Delta,
   p2Delta,
   p1CardSlotRef,
@@ -111,6 +113,7 @@ export function CenterTable({
             <CardComponent
               card={p1Card}
               className={p1Card.faceUp ? 'card-appear-left' : ''}
+              winner={winnerSide === 'p1' && p1Card.faceUp}
             />
           ) : (
             <CardComponent placeholder />
@@ -125,6 +128,7 @@ export function CenterTable({
             <CardComponent
               card={p2Card}
               className={p2Card.faceUp ? 'card-appear-right' : ''}
+              winner={winnerSide === 'p2' && p2Card.faceUp}
             />
           ) : (
             <CardComponent placeholder />
@@ -317,6 +321,14 @@ export function CenterTable({
 
   return (
     <div className="center-area">
+      {/* Table logo — visible only in setup phase */}
+      {phase === 'setup' && (
+        <div className="table-logo">
+          <div className="table-logo-diamond">
+            <span>WAR</span>
+          </div>
+        </div>
+      )}
       {/* Auto Play / Stop — fixed at top, always same position */}
       {phase !== 'setup' && phase !== 'game_over' && (
         <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 10 }}>

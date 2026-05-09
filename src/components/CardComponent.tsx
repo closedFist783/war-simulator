@@ -68,6 +68,8 @@ export function CardComponent({
       className={`playing-card ${colorClass} ${sizeClass} ${winnerClass} ${hoverClass} card-flip ${className}`}
       style={style}
     >
+      {/* Decorative inner frame */}
+      <div className="card-inner-frame" />
       <div className="card-corner top-left">
         <span className="card-rank">{card.rank}</span>
         <span className="card-suit-small">{card.suit}</span>

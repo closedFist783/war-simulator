@@ -1,4 +1,4 @@
-/* ===== POKER TABLE STYLES — AAA PREMIUM OVERHAUL ===== */
+/* ===== POKER TABLE STYLES — UE5 / EXPEDITION 33 LEVEL ===== */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
@@ -9,7 +9,7 @@
 body {
   margin: 0;
   padding: 0;
-  background: #05080f;
+  background: #020408;
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   color: #F8FAFC;
   overflow: hidden;
@@ -24,92 +24,92 @@ body {
   flex-direction: column;
   overflow: hidden;
   background:
-    radial-gradient(ellipse at 20% 50%, rgba(91, 141, 239, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 0%, rgba(201, 168, 76, 0.05) 0%, transparent 40%),
-    linear-gradient(180deg, #05080f 0%, #080d1a 50%, #050810 100%);
+    /* Star field simulation */
+    radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3) 0%, transparent 100%),
+    radial-gradient(1px 1px at 30% 80%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 60% 15%, rgba(255,255,255,0.25) 0%, transparent 100%),
+    radial-gradient(1px 1px at 85% 60%, rgba(255,255,255,0.2) 0%, transparent 100%),
+    radial-gradient(1px 1px at 45% 45%, rgba(255,255,255,0.15) 0%, transparent 100%),
+    radial-gradient(1px 1px at 72% 88%, rgba(255,255,255,0.18) 0%, transparent 100%),
+    radial-gradient(1px 1px at 18% 55%, rgba(255,255,255,0.12) 0%, transparent 100%),
+    /* Player aura glows bleeding into background */
+    radial-gradient(ellipse 25% 40% at 8% 50%, rgba(56,189,248,0.06) 0%, transparent 100%),
+    radial-gradient(ellipse 25% 40% at 92% 50%, rgba(167,139,250,0.06) 0%, transparent 100%),
+    /* Gold top glow from table */
+    radial-gradient(ellipse 80% 30% at 50% 50%, rgba(201,168,76,0.04) 0%, transparent 100%),
+    /* Deep space */
+    linear-gradient(180deg, #020408 0%, #04080f 40%, #030609 100%);
   position: relative;
 }
 
-/* ===== ATMOSPHERIC PARTICLES ===== */
+/* ===== ATMOSPHERIC PARTICLES — GPU ACCELERATED ===== */
+
+@keyframes drift-1 {
+  0%,100% { transform: translate(0,0) scale(1); opacity: .3; }
+  30%      { transform: translate(20px,-30px) scale(1.2); opacity: .7; }
+  70%      { transform: translate(-15px,-15px) scale(.8); opacity: .4; }
+}
+@keyframes drift-2 {
+  0%,100% { transform: translate(0,0) scale(1); opacity: .25; }
+  40%     { transform: translate(-25px,-20px) scale(1.3); opacity: .65; }
+  75%     { transform: translate(10px,-35px) scale(.9); opacity: .35; }
+}
+@keyframes drift-3 {
+  0%,100% { transform: translate(0,0); opacity: .2; }
+  50%     { transform: translate(30px,-40px) scale(1.1); opacity: .6; }
+}
+@keyframes drift-4 {
+  0%,100% { transform: translate(0,0); opacity: .35; }
+  35%     { transform: translate(-20px,-25px); opacity: .75; }
+  80%     { transform: translate(15px,-10px); opacity: .4; }
+}
+@keyframes drift-5 {
+  0%,100% { transform: translate(0,0) scale(1); opacity: .4; }
+  45%     { transform: translate(25px,-20px) scale(1.4); opacity: .9; }
+  80%     { transform: translate(-10px,-30px) scale(.85); opacity: .5; }
+}
+@keyframes drift-6 {
+  0%,100% { transform: translate(0,0); opacity: .3; }
+  60%     { transform: translate(-30px,-15px); opacity: .7; }
+}
+@keyframes drift-7 {
+  0%,100% { transform: translate(0,0) scale(1); opacity: .2; }
+  50%     { transform: translate(15px,-45px) scale(1.2); opacity: .55; }
+}
+@keyframes drift-8 {
+  0%,100% { transform: translate(0,0); opacity: .45; }
+  40%     { transform: translate(-18px,-22px); opacity: .85; }
+  70%     { transform: translate(12px,-35px); opacity: .55; }
+}
+@keyframes spark {
+  0%   { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(10px,-60px) scale(0); opacity: 0; }
+}
 
 .particle {
-  position: absolute;
+  position: fixed;
   border-radius: 50%;
   pointer-events: none;
   z-index: 0;
+  will-change: transform;
 }
 
-.particle-1 {
-  width: 3px; height: 3px;
-  background: rgba(91, 141, 239, 0.6);
-  top: 15%; left: 10%;
-  box-shadow: 0 0 6px rgba(91, 141, 239, 0.8);
-  animation: float-particle 8s ease-in-out infinite;
-  animation-delay: 0s;
-}
-.particle-2 {
-  width: 2px; height: 2px;
-  background: rgba(201, 168, 76, 0.5);
-  top: 40%; left: 25%;
-  box-shadow: 0 0 5px rgba(201, 168, 76, 0.7);
-  animation: float-particle 11s ease-in-out infinite;
-  animation-delay: -2s;
-}
-.particle-3 {
-  width: 4px; height: 4px;
-  background: rgba(139, 92, 246, 0.5);
-  top: 70%; left: 15%;
-  box-shadow: 0 0 8px rgba(139, 92, 246, 0.7);
-  animation: float-particle 9s ease-in-out infinite;
-  animation-delay: -4s;
-}
-.particle-4 {
-  width: 2px; height: 2px;
-  background: rgba(91, 141, 239, 0.4);
-  top: 20%; right: 15%;
-  box-shadow: 0 0 5px rgba(91, 141, 239, 0.6);
-  animation: float-particle 13s ease-in-out infinite;
-  animation-delay: -1s;
-}
-.particle-5 {
-  width: 3px; height: 3px;
-  background: rgba(201, 168, 76, 0.6);
-  top: 60%; right: 20%;
-  box-shadow: 0 0 7px rgba(201, 168, 76, 0.8);
-  animation: float-particle 10s ease-in-out infinite;
-  animation-delay: -3s;
-}
-.particle-6 {
-  width: 2px; height: 2px;
-  background: rgba(139, 92, 246, 0.4);
-  top: 80%; right: 10%;
-  box-shadow: 0 0 5px rgba(139, 92, 246, 0.6);
-  animation: float-particle 12s ease-in-out infinite;
-  animation-delay: -5s;
-}
-.particle-7 {
-  width: 3px; height: 3px;
-  background: rgba(34, 197, 94, 0.4);
-  top: 30%; left: 50%;
-  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
-  animation: float-particle 14s ease-in-out infinite;
-  animation-delay: -6s;
-}
-.particle-8 {
-  width: 2px; height: 2px;
-  background: rgba(248, 113, 113, 0.3);
-  top: 85%; left: 60%;
-  box-shadow: 0 0 5px rgba(248, 113, 113, 0.5);
-  animation: float-particle 7s ease-in-out infinite;
-  animation-delay: -7s;
-}
-
-@keyframes float-particle {
-  0%, 100% { transform: translateY(0px) translateX(0px); opacity: 0.3; }
-  33% { transform: translateY(-20px) translateX(10px); opacity: 0.6; }
-  66% { transform: translateY(-10px) translateX(-8px); opacity: 0.4; }
-}
+/* White/gold particles */
+.particle-1  { width:2px; height:2px; background:#C9A84C; top:15%; left:12%; animation: drift-1 8s ease-in-out infinite; box-shadow: 0 0 4px rgba(201,168,76,0.9); }
+.particle-2  { width:1px; height:1px; background:rgba(255,255,255,0.85); top:25%; left:85%; animation: drift-2 12s ease-in-out infinite 2s; }
+.particle-3  { width:3px; height:3px; background:rgba(201,168,76,0.7); top:60%; left:18%; animation: drift-3 9s ease-in-out infinite 4s; box-shadow: 0 0 6px rgba(201,168,76,0.8); }
+.particle-4  { width:1px; height:1px; background:rgba(255,255,255,0.7); top:20%; right:18%; animation: drift-4 13s ease-in-out infinite 1s; }
+/* Blue particles */
+.particle-5  { width:2px; height:2px; background:rgba(56,189,248,0.7); top:40%; left:5%; animation: drift-5 10s ease-in-out infinite 3s; box-shadow: 0 0 5px rgba(56,189,248,0.8); }
+.particle-6  { width:1px; height:1px; background:rgba(56,189,248,0.5); top:72%; right:22%; animation: drift-6 14s ease-in-out infinite 5s; }
+/* Purple/green */
+.particle-7  { width:2px; height:2px; background:rgba(34,197,94,0.5); top:35%; left:55%; animation: drift-7 11s ease-in-out infinite 6s; box-shadow: 0 0 4px rgba(34,197,94,0.6); }
+.particle-8  { width:1px; height:1px; background:rgba(255,255,255,0.6); top:85%; left:65%; animation: drift-8 7s ease-in-out infinite 7s; }
+/* Sparks — bright and short */
+.particle-9  { width:1px; height:1px; background:#fff; top:10%; left:30%; animation: spark 4s ease-out infinite 2s; opacity: 0; }
+.particle-10 { width:2px; height:2px; background:#C9A84C; top:80%; left:45%; animation: spark 5s ease-out infinite 3.5s; opacity: 0; box-shadow: 0 0 6px #C9A84C; }
+.particle-11 { width:3px; height:3px; background:rgba(56,189,248,0.8); top:50%; right:8%; animation: drift-1 16s ease-in-out infinite 0.5s; box-shadow: 0 0 8px rgba(56,189,248,0.9); }
+.particle-12 { width:1px; height:1px; background:rgba(255,255,255,0.9); top:65%; right:40%; animation: drift-4 9s ease-in-out infinite 4.5s; }
 
 /* ===== TABLE LAYOUT ===== */
 
@@ -131,17 +131,27 @@ body {
   height: calc(100vh - 80px);
   min-height: 520px;
   background:
-    radial-gradient(ellipse at center, #1e4d1a 0%, #0f2d0c 40%, #071a05 75%, #030e02 100%);
+    /* Volumetric top-down light cone */
+    radial-gradient(ellipse 60% 70% at 50% -10%, rgba(255,255,240,0.07) 0%, transparent 60%),
+    /* Ambient fill lights */
+    radial-gradient(ellipse at 30% 40%, rgba(40,120,40,0.4) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(20,80,20,0.3) 0%, transparent 50%),
+    /* Base deep green */
+    radial-gradient(ellipse at center, #1e4d1a 0%, #0a2808 50%, #030e02 100%);
   border-radius: 50% / 20%;
   border: none;
+  /* Polished dark wood rail with gold inlay */
   box-shadow:
-    0 0 0 3px #8B6914,
+    0 0 0 3px #4a3000,
     0 0 0 6px #C9A84C,
-    0 0 0 9px #8B6914,
-    0 0 60px rgba(201, 168, 76, 0.4),
-    0 0 120px rgba(201, 168, 76, 0.15),
-    inset 0 0 80px rgba(0,0,0,0.6),
-    inset 0 0 200px rgba(0,0,0,0.3);
+    0 0 0 8px #8B6914,
+    0 0 0 14px #2a1a00,
+    0 0 0 16px rgba(201,168,76,0.3),
+    0 0 60px rgba(201,168,76,0.35),
+    0 0 120px rgba(201,168,76,0.15),
+    0 0 200px rgba(100,60,0,0.3),
+    inset 0 0 80px rgba(0,0,0,0.7),
+    inset 0 40px 80px rgba(0,0,0,0.3);
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   grid-template-rows: 1fr;
@@ -149,26 +159,32 @@ body {
   overflow: hidden;
 }
 
-/* Felt texture overlay */
+/* Felt texture — real baize weave */
 .table-felt::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Ccircle cx='1' cy='1' r='0.5' fill='rgba(255,255,255,0.015)'/%3E%3Ccircle cx='3' cy='3' r='0.5' fill='rgba(255,255,255,0.015)'/%3E%3C/svg%3E");
-  background-size: 4px 4px;
+  background-image:
+    /* Fine grain */
+    repeating-linear-gradient(0deg, transparent 0px, transparent 1px, rgba(0,0,0,0.03) 1px, rgba(0,0,0,0.03) 2px),
+    /* Cross weave */
+    repeating-linear-gradient(90deg, transparent 0px, transparent 1px, rgba(255,255,255,0.01) 1px, rgba(255,255,255,0.01) 2px),
+    /* Diagonal nap */
+    repeating-linear-gradient(45deg, transparent, transparent 3px, rgba(0,0,0,0.015) 3px, rgba(0,0,0,0.015) 4px),
+    repeating-linear-gradient(-45deg, transparent, transparent 3px, rgba(255,255,255,0.01) 3px, rgba(255,255,255,0.01) 4px);
+  background-size: 2px 2px, 2px 2px, 4px 4px, 4px 4px;
   pointer-events: none;
   z-index: 0;
 }
 
-/* Light source from above */
+/* Vignette — ambient occlusion at edges */
 .table-felt::after {
   content: '';
   position: absolute;
-  top: 0; left: 10%; right: 10%;
-  height: 40%;
-  background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 70%);
+  inset: 0;
   border-radius: inherit;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.5) 80%, rgba(0,0,0,0.8) 100%);
   pointer-events: none;
   z-index: 0;
 }
@@ -205,7 +221,7 @@ body {
   margin-right: 8px;
 }
 
-/* ===== PLAYER AREAS ===== */
+/* ===== PLAYER AREAS — Float on the felt ===== */
 
 .player-area {
   display: flex;
@@ -215,11 +231,12 @@ body {
   padding: 20px 16px;
   height: 100%;
   justify-content: center;
-  background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
-  border: 1px solid rgba(255,255,255,0.08);
+  /* Green-tinted glass that blends into the felt — eliminates dark bands */
+  background: rgba(15, 45, 12, 0.25);
+  border: 1px solid rgba(255,255,255,0.05);
   border-radius: 20px;
-  backdrop-filter: blur(20px);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.06);
+  /* No backdrop-filter — would clip against the felt */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
   margin: 16px 8px;
 }
 
@@ -307,14 +324,14 @@ body {
   color: #C9A84C;
 }
 
-/* ===== PROBABILITY DISPLAY ===== */
+/* ===== PROBABILITY DISPLAY — HOLOGRAPHIC HUD ===== */
 
 .prob-display {
   text-align: center;
 }
 
 .prob-main {
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 900;
   letter-spacing: -0.04em;
   line-height: 1;
@@ -323,11 +340,11 @@ body {
 
 .prob-main.accent-a {
   color: #38BDF8;
-  text-shadow: 0 0 30px rgba(56, 189, 248, 0.8), 0 0 60px rgba(56, 189, 248, 0.4);
+  filter: drop-shadow(0 0 8px #38BDF8) drop-shadow(0 0 20px rgba(56,189,248,0.6));
 }
 .prob-main.accent-b {
   color: #A78BFA;
-  text-shadow: 0 0 30px rgba(167, 139, 250, 0.8), 0 0 60px rgba(167, 139, 250, 0.4);
+  filter: drop-shadow(0 0 8px #A78BFA) drop-shadow(0 0 20px rgba(167,139,250,0.6));
 }
 
 .prob-delta {
@@ -434,6 +451,35 @@ body {
   border-radius: 20px;
   letter-spacing: 0.05em;
   box-shadow: 0 0 16px rgba(201,168,76,0.2);
+}
+
+/* ===== TABLE LOGO — CENTER WHEN IDLE ===== */
+
+.table-logo {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0.07;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.table-logo-diamond {
+  width: 120px; height: 120px;
+  border: 2px solid #C9A84C;
+  transform: rotate(45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table-logo-diamond span {
+  transform: rotate(-45deg);
+  color: #C9A84C;
+  font-size: 28px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  font-family: 'Inter', serif;
 }
 
 /* ===== CONTROLS ===== */
@@ -643,15 +689,32 @@ body {
   50% { box-shadow: 0 0 35px rgba(248,113,113,0.7); }
 }
 
-/* ===== PLAYING CARDS — PREMIUM DESIGN ===== */
+/* ===== PLAYING CARDS — MUSEUM QUALITY ===== */
 
 .playing-card {
   width: 70px;
   height: 98px;
   border-radius: 6px;
-  background: #FDFBF7;
+  background:
+    /* Paper fiber texture */
+    repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(0,0,0,0.008) 8px, rgba(0,0,0,0.008) 9px),
+    /* Specular highlight — light hits top-left */
+    radial-gradient(ellipse at 25% 20%, rgba(255,255,255,0.4) 0%, transparent 40%),
+    /* Base warm white */
+    linear-gradient(145deg, #FFFFFF 0%, #F8F4EE 60%, #F0EBE3 100%);
   border: 1px solid rgba(0,0,0,0.08);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 2px 4px rgba(0,0,0,0.3), inset 0 0 0 1px rgba(0,0,0,0.08);
+  box-shadow:
+    /* Contact shadow */
+    0 1px 3px rgba(0,0,0,0.4),
+    /* Lift shadow */
+    0 6px 20px rgba(0,0,0,0.5),
+    /* Ambient shadow */
+    0 16px 40px rgba(0,0,0,0.4),
+    /* Edge bevel */
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -1px 0 rgba(0,0,0,0.1),
+    inset 1px 0 0 rgba(255,255,255,0.5),
+    inset -1px 0 0 rgba(0,0,0,0.06);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -694,7 +757,7 @@ body {
 }
 
 .card-suit-small {
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
 }
 
@@ -703,33 +766,66 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  font-size: 40px;
+  font-size: 44px;
   line-height: 1;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
-/* Inner decorative border */
-.playing-card:not(.card-back):not(.card-placeholder)::before {
-  content: '';
+/* Inner decorative frame on face-up cards */
+.card-inner-frame {
   position: absolute;
-  inset: 3px;
-  border-radius: 4px;
-  border: 1px solid rgba(0,0,0,0.05);
+  inset: 4px;
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: 3px;
   pointer-events: none;
+  z-index: 0;
 }
 
-/* Winner card highlight */
+/* Winner card — cinematic gold glow pulse */
 .playing-card.card-winner {
-  box-shadow: 0 0 0 2px #C9A84C, 0 0 20px rgba(201,168,76,0.5), 0 8px 24px rgba(0,0,0,0.6);
+  box-shadow:
+    0 0 0 2px #C9A84C,
+    0 0 20px rgba(201,168,76,0.8),
+    0 0 40px rgba(201,168,76,0.5),
+    0 0 80px rgba(201,168,76,0.3),
+    0 8px 32px rgba(0,0,0,0.6);
+  animation: winner-card-pulse 0.8s ease-in-out infinite alternate;
 }
 
-/* Card back — dark navy with geometric pattern */
+@keyframes winner-card-pulse {
+  from {
+    box-shadow:
+      0 0 0 2px #C9A84C,
+      0 0 20px rgba(201,168,76,0.8),
+      0 0 40px rgba(201,168,76,0.5);
+  }
+  to {
+    box-shadow:
+      0 0 0 2px #C9A84C,
+      0 0 30px rgba(201,168,76,1),
+      0 0 70px rgba(201,168,76,0.7),
+      0 0 120px rgba(201,168,76,0.3);
+  }
+}
+
+/* Card back — ornate navy with gold crosshatch */
 .playing-card.card-back {
   background:
-    repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(201,168,76,0.08) 4px, rgba(201,168,76,0.08) 5px),
-    repeating-linear-gradient(-45deg, transparent, transparent 4px, rgba(201,168,76,0.08) 4px, rgba(201,168,76,0.08) 5px),
-    radial-gradient(ellipse at center, #1a2f5e 0%, #0F1B3E 100%);
-  border: 1px solid rgba(201,168,76,0.4);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.5), inset 0 0 0 3px rgba(201,168,76,0.15);
+    /* Diamond center motif */
+    radial-gradient(ellipse 30% 40% at 50% 50%, rgba(201,168,76,0.15) 0%, transparent 100%),
+    /* Crosshatch pattern */
+    repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(201,168,76,0.12) 5px, rgba(201,168,76,0.12) 6px),
+    repeating-linear-gradient(-45deg, transparent, transparent 5px, rgba(201,168,76,0.08) 5px, rgba(201,168,76,0.08) 6px),
+    /* Gradient border glow */
+    linear-gradient(135deg, rgba(201,168,76,0.2) 0%, transparent 40%, transparent 60%, rgba(201,168,76,0.15) 100%),
+    /* Base */
+    linear-gradient(145deg, #0d1f4a 0%, #0a1535 50%, #060e28 100%);
+  border: 1px solid rgba(201,168,76,0.5);
+  box-shadow:
+    inset 0 0 0 4px rgba(201,168,76,0.12),
+    inset 0 0 0 6px rgba(0,0,0,0.3),
+    0 4px 16px rgba(0,0,0,0.6),
+    0 0 8px rgba(201,168,76,0.15);
   color: transparent;
 }
 
@@ -739,7 +835,7 @@ body {
   position: absolute;
   inset: 5px;
   border-radius: 3px;
-  border: 1px solid rgba(201,168,76,0.25);
+  border: 1px solid rgba(201,168,76,0.3);
   pointer-events: none;
 }
 
@@ -751,7 +847,7 @@ body {
   left: 50%;
   transform: translate(-50%, -50%);
   font-size: 20px;
-  color: rgba(201,168,76,0.2);
+  color: rgba(201,168,76,0.25);
   pointer-events: none;
 }
 
@@ -767,7 +863,7 @@ body {
   height: 118px;
 }
 .playing-card.card-large .card-rank { font-size: 18px; }
-.playing-card.card-large .card-suit-small { font-size: 13px; }
+.playing-card.card-large .card-suit-small { font-size: 14px; }
 .playing-card.card-large .card-center-suit { font-size: 46px; }
 
 /* Hoverable cards (deck viewer, card picker) */
@@ -777,21 +873,25 @@ body {
 }
 .card-hoverable:hover {
   transform: translateY(-6px) scale(1.05);
-  box-shadow: 0 12px 32px rgba(0,0,0,0.5), 0 0 0 2px rgba(201,168,76,0.4);
+  box-shadow:
+    0 12px 32px rgba(0,0,0,0.5),
+    0 0 0 2px rgba(201,168,76,0.4),
+    0 0 20px rgba(201,168,76,0.2);
   z-index: 10;
   position: relative;
 }
 
-/* ===== CARD FLIP ANIMATION ===== */
+/* ===== CARD FLIP ANIMATION — CINEMATIC WITH OVERSHOOT ===== */
 
 @keyframes card-flip-in {
-  0% { transform: rotateY(90deg) scale(0.8); opacity: 0; }
-  60% { transform: rotateY(-8deg) scale(1.05); }
-  100% { transform: rotateY(0deg) scale(1); opacity: 1; }
+  0%   { transform: rotateY(90deg) scale(0.7) translateZ(-20px); opacity: 0; filter: brightness(0.5); }
+  50%  { transform: rotateY(-12deg) scale(1.08) translateZ(10px); filter: brightness(1.3); }
+  75%  { transform: rotateY(4deg) scale(1.02); filter: brightness(1.1); }
+  100% { transform: rotateY(0deg) scale(1) translateZ(0); opacity: 1; filter: brightness(1); }
 }
 
 .card-flip {
-  animation: card-flip-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: card-flip-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 
 .card-flip-container {
@@ -831,7 +931,7 @@ body {
   transform-origin: center center;
 }
 
-/* ===== WAR BANNER — CINEMATIC ===== */
+/* ===== WAR BANNER — CHROMATIC ABERRATION EPIC ===== */
 
 .war-banner-overlay {
   position: absolute;
@@ -860,10 +960,13 @@ body {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: #F59E0B;
+  /* Chromatic aberration effect */
   text-shadow:
-    0 0 20px rgba(245,158,11,0.8),
-    0 0 60px rgba(245,158,11,0.4),
-    0 0 120px rgba(245,158,11,0.2),
+    -2px 0 rgba(255, 0, 0, 0.5),
+    2px 0 rgba(0, 0, 255, 0.5),
+    0 0 30px rgba(245,158,11,0.9),
+    0 0 80px rgba(245,158,11,0.5),
+    0 0 150px rgba(245,158,11,0.3),
     0 4px 0 rgba(0,0,0,0.5);
   animation: war-pulse 0.5s ease-in-out infinite alternate;
   display: flex;
@@ -891,10 +994,20 @@ body {
 
 @keyframes war-pulse {
   from {
-    text-shadow: 0 0 20px rgba(245,158,11,0.8), 0 0 60px rgba(245,158,11,0.4), 0 4px 0 rgba(0,0,0,0.5);
+    text-shadow:
+      -2px 0 rgba(255,0,0,0.5),
+      2px 0 rgba(0,0,255,0.5),
+      0 0 20px rgba(245,158,11,0.8),
+      0 0 60px rgba(245,158,11,0.4),
+      0 4px 0 rgba(0,0,0,0.5);
   }
   to {
-    text-shadow: 0 0 40px rgba(245,158,11,1), 0 0 100px rgba(245,158,11,0.6), 0 4px 0 rgba(0,0,0,0.5);
+    text-shadow:
+      -3px 0 rgba(255,0,0,0.7),
+      3px 0 rgba(0,0,255,0.7),
+      0 0 40px rgba(245,158,11,1),
+      0 0 100px rgba(245,158,11,0.6),
+      0 4px 0 rgba(0,0,0,0.5);
   }
 }
 
@@ -940,15 +1053,15 @@ body {
 /* ===== PROBABILITY ANIMATIONS ===== */
 
 @keyframes prob-flash-green {
-  0% { text-shadow: 0 0 30px currentColor, 0 0 60px currentColor; }
-  30% { text-shadow: 0 0 40px rgba(34, 197, 94, 1), 0 0 80px rgba(34, 197, 94, 0.8); color: #22C55E; }
-  100% { text-shadow: 0 0 30px currentColor, 0 0 60px currentColor; color: inherit; }
+  0% { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 20px currentColor); }
+  30% { filter: drop-shadow(0 0 16px rgba(34,197,94,1)) drop-shadow(0 0 40px rgba(34,197,94,0.8)); color: #22C55E; }
+  100% { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 20px currentColor); color: inherit; }
 }
 
 @keyframes prob-flash-red {
-  0% { text-shadow: 0 0 30px currentColor, 0 0 60px currentColor; }
-  30% { text-shadow: 0 0 40px rgba(248, 113, 113, 1), 0 0 80px rgba(248, 113, 113, 0.8); color: #F87171; }
-  100% { text-shadow: 0 0 30px currentColor, 0 0 60px currentColor; color: inherit; }
+  0% { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 20px currentColor); }
+  30% { filter: drop-shadow(0 0 16px rgba(248,113,113,1)) drop-shadow(0 0 40px rgba(248,113,113,0.8)); color: #F87171; }
+  100% { filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 20px currentColor); color: inherit; }
 }
 
 .prob-flash-green { animation: prob-flash-green 0.8s ease-out; }

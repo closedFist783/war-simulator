@@ -138,7 +138,7 @@ export function PokerTable() {
   const [p2WarDecider, setP2WarDecider] = useState<GameCard | null>(null);
   const [potCards, setPotCards] = useState<GameCard[]>([]);
   const [potSize, setPotSize] = useState(0);
-  const [_winnerId, setWinnerId] = useState<string | null>(null);
+  const [winnerId, setWinnerId] = useState<string | null>(null);
   const [resultMessage, setResultMessage] = useState('');
   const [isWar, setIsWar] = useState(false);
 
@@ -799,6 +799,8 @@ export function PokerTable() {
     runProbUpdate(fresh1, fresh2);
   };
 
+  const winnerSide: 'p1' | 'p2' | null = winnerId === p1.id ? 'p1' : winnerId === p2.id ? 'p2' : null;
+
   const gameWinnerId = phase === 'game_over'
     ? (p1.totalCards === 0 ? p2.id : p1.id)
     : null;
@@ -849,6 +851,7 @@ export function PokerTable() {
             roundNumber={roundNumber}
             isWar={isWar}
             capturing={capturingCards}
+            winnerSide={winnerSide}
             p1Delta={p1.delta}
             p2Delta={p2.delta}
             p1CardSlotRef={p1CardSlotRef}
